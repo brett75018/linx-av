@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sébastien Brett — product design case study">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Commencez maintenant. Décidez plus tard. — prototype (FR)">
+<meta property="og:description" content="Parcourez le tunnel d'onboarding redessiné : projection dès l'étape projet, dossier sauvegardé avant le compte, et une aide réellement joignable.">
+<meta property="og:url" content="https://brett75018.github.io/linx-av/fr.html">
+<meta property="og:image" content="https://brett75018.github.io/linx-av/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Start now. Decide later. — a prototype screen showing an AI assistant recommending a life-insurance contract.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Commencez maintenant. Décidez plus tard. — prototype (FR)">
+<meta name="twitter:description" content="Parcourez le tunnel d'onboarding redessiné : projection dès l'étape projet, dossier sauvegardé avant le compte, et une aide réellement joignable.">
+<meta name="twitter:image" content="https://brett75018.github.io/linx-av/og-image.png">
+<meta name="theme-color" content="#FBF8F4">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Linxea — Prototype onboarding novice (case study)</title>
+<style>
+:root{
+  --navy:#1A5169;
+  --navy-deep:#123A50;
+  --orange:#F5821F;
+  --orange-dark:#E0740F;
+  --ink:#1F2A33;
+  --muted:#5B6670;
+  --line:#E3E6E9;
+  --bg:#F5F6F7;
+  --white:#fff;
+  --tip:#DCEAF5;
+  --error:#D92D20;
+  --green:#2F9E58;
+  --green-bg:#E9F7EE;
+  --red-bg:#FDECEA;
+  --warm:#FDF0E3;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:#2B3440;color:var(--ink);-webkit-font-smoothing:antialiased;
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+input{font-family:inherit;}
+
+/* ---------- iPhone 14 frame (desktop) ---------- */
+.device{
+  position:relative;width:390px;height:844px;background:var(--bg);
+  border-radius:46px;box-shadow:0 0 0 12px #12181f,0 0 0 14px #333c47,0 40px 90px rgba(0,0,0,.55);
+  overflow:hidden;flex:0 0 auto;
+}
+.notch{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:120px;height:32px;background:#000;border-radius:20px;z-index:60;
+}
+.statusbar{
+  position:absolute;top:0;left:0;right:0;height:52px;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px 0;font-size:15px;font-weight:600;color:#000;pointer-events:none;
+  font-variant-numeric:tabular-nums;letter-spacing:-.2px;
+}
+.statusbar .t{display:flex;align-items:center;gap:4px;}
+.statusbar .sysicons{display:flex;align-items:center;gap:6px;}
+.statusbar .sysicons svg{display:block;}
+.viewport{position:absolute;inset:0;padding-top:52px;overflow:hidden;}
+
+@media (max-width:820px){
+  body{display:block;background:var(--bg);}
+  .device{width:100%;height:100vh;height:100dvh;border-radius:0;box-shadow:none;}
+  .notch{display:none;}
+  .statusbar{display:none;}
+  .viewport{padding-top:env(safe-area-inset-top,0);}
+}
+
+/* ---------- screens ---------- */
+.screen{display:none;height:100%;flex-direction:column;background:var(--bg);}
+.screen.active{display:flex;}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.scroll.pb{padding-bottom:88px;}
+
+/* ---------- browser chrome ---------- */
+.urlbar{
+  background:var(--bg);padding:6px 12px 8px;flex:0 0 auto;
+}
+.urlbar .pill{
+  background:#fff;border-radius:12px;height:36px;display:flex;align-items:center;
+  justify-content:center;gap:8px;font-size:13px;color:#3C3C43;
+  box-shadow:0 1px 2px rgba(0,0,0,.08);position:relative;
+}
+.urlbar .pill .ico{position:absolute;left:12px;opacity:.5;font-size:12px;}
+.urlbar .pill .rl{position:absolute;right:12px;opacity:.5;font-size:14px;}
+
+/* ---------- app header ---------- */
+.hdr{
+  background:#fff;display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--line);flex:0 0 auto;
+}
+.hdr .logo{width:27px;height:36px;flex:0 0 auto;cursor:pointer;display:block;object-fit:contain;}
+.icons .qm{
+  width:26px;height:26px;border-radius:50%;border:1.6px solid var(--navy);
+  font-size:15px;font-weight:700;line-height:1;color:var(--navy);
+}
+.hdr .later{
+  font-size:14px;color:var(--navy);font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;
+  padding:9px 14px;border-radius:8px;background:transparent;
+  transition:background .15s, color .15s;cursor:pointer;
+}
+.hdr .later:hover{background:var(--tip);color:var(--navy-deep);}
+.hdr .later:active{background:#C4DDEC;}
+.hdr .later:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+.hdr .laterwrap{flex:1;display:flex;justify-content:center;}
+.hdr .spacer{flex:1;}
+.hdr .icons{display:flex;gap:14px;align-items:center;flex:0 0 auto;}
+.hdr .icons button{width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:var(--navy);}
+
+/* progress */
+.prog{background:var(--bg);padding:10px 16px 0;flex:0 0 auto;}
+.prog .lbl{text-align:center;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.prog .track{height:3px;background:#E9EBED;border-radius:3px;overflow:hidden;}
+.prog .fill{display:block;height:100%;background:var(--orange);transition:width .3s;}
+.prog .step{text-align:right;font-size:12px;color:var(--muted);padding:6px 0 8px;}
+
+/* ---------- question layout ---------- */
+.q{padding:4px 16px 16px;}
+.q h1{font-size:19px;line-height:1.35;color:var(--navy);text-align:center;margin:8px 0 18px;font-weight:700;}
+.q .hint{font-size:13px;color:var(--orange);text-align:center;margin:-10px 0 16px;}
+.opt{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:14px 16px;margin-bottom:12px;font-size:14px;color:var(--ink);
+  text-align:center;line-height:1.4;transition:.15s;
+}
+.opt:active{transform:scale(.99);}
+.opt.sel{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600;}
+.errmsg{display:none;color:var(--error);font-size:13px;text-align:center;margin:-4px 0 12px;}
+.errmsg.show{display:block;}
+
+.tipbox{
+  display:flex;gap:12px;align-items:flex-start;background:var(--tip);
+  border-radius:10px;padding:12px 14px;margin-top:6px;
+}
+.tipbox .av{width:34px;height:34px;border-radius:50%;background:#B9CBD8;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:15px;}
+.tipbox p{margin:0;font-size:12.5px;line-height:1.45;color:var(--navy-deep);}
+
+.field{
+  width:100%;background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:13px 14px;font-size:15px;color:var(--ink);
+}
+.field::placeholder{color:#A6AEB5;}
+
+/* ---------- sticky funnel nav ---------- */
+.nav{
+  position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;padding:12px 16px 14px;z-index:30;
+}
+.nav.static{position:static;}
+.nav .back{font-size:14px;color:var(--navy);display:flex;align-items:center;gap:6px;flex:0 0 auto;}
+.nav .cta{
+  flex:1;background:var(--orange);color:#fff;font-size:15px;font-weight:600;
+  border-radius:8px;padding:14px 10px;text-align:center;
+}
+.nav .cta:active{background:var(--orange-dark);}
+
+/* ---------- generic cards ---------- */
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 16px 14px;}
+.sec-title{font-size:20px;color:var(--navy);font-weight:700;margin:20px 16px 10px;}
+
+/* ---------- projection screen ---------- */
+.pj-intro{padding:6px 16px 14px;}
+.pj-intro h1{font-size:20px;color:var(--navy);margin:6px 0 8px;font-weight:700;}
+.pj-intro p{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted);}
+.grp{padding:14px 0;border-bottom:1px solid #EDEFF1;}
+.grp:last-child{border-bottom:none;padding-bottom:0;}
+.grp .lab{font-size:11.5px;letter-spacing:.6px;font-weight:700;color:var(--navy);text-transform:uppercase;}
+.grp .sub{font-size:13px;color:var(--muted);margin:4px 0 10px;line-height:1.4;}
+.inwrap{position:relative;}
+.inwrap .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;}
+.inwrap input{padding-right:38px;text-align:left;}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px;}
+.chip{
+  background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 2px;
+  font-size:12px;color:var(--ink);text-align:center;
+  white-space:nowrap;overflow:hidden;
+  /* même graisse dans les deux états : la largeur ne bouge pas à la sélection */
+  font-weight:600;letter-spacing:-.1px;
+}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+.warmbox{background:var(--warm);border-radius:10px;padding:14px 16px;margin:0 16px 16px;}
+.warmbox h4{margin:0 0 8px;font-size:11.5px;letter-spacing:.5px;color:var(--navy);text-transform:uppercase;}
+.warmbox p{margin:0 0 6px;font-size:13px;line-height:1.5;color:var(--ink);}
+.warmbox p:last-child{margin-bottom:0;}
+
+.empty{text-align:center;padding:28px 18px;}
+.empty .circ{width:64px;height:64px;border-radius:50%;background:#F1F3F4;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;}
+.empty h3{margin:0 0 8px;font-size:16px;color:var(--navy);}
+.empty p{margin:0 0 14px;font-size:13px;color:var(--muted);line-height:1.5;}
+.empty a{color:var(--navy);font-weight:600;font-size:13.5px;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;}
+
+.risk{margin-bottom:16px;}
+.risk .lab{font-size:11.5px;letter-spacing:.6px;font-weight:700;color:var(--navy);text-transform:uppercase;}
+.risk .sub{font-size:12.5px;color:var(--muted);margin:4px 0 10px;line-height:1.4;}
+.risk .track2{position:relative;height:28px;margin:16px 0 2px;cursor:pointer;touch-action:none;}
+.risk .bar{position:absolute;left:8px;right:8px;top:12px;height:4px;background:#E9EBED;border-radius:4px;}
+.risk .bar .fl{position:absolute;left:0;top:0;bottom:0;background:var(--orange);border-radius:4px;width:33.33%;}
+.risk .kn{position:absolute;top:14px;width:18px;height:18px;border-radius:50%;background:#fff;
+  border:2.5px solid var(--ink);transform:translate(-50%,-50%);left:8px;transition:left .18s;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.risk .names{display:flex;font-size:11.5px;color:var(--muted);}
+.risk .names span{flex:1;text-align:center;cursor:pointer;padding:2px 0;}
+.risk .names span:first-child{text-align:left;}
+.risk .names span:last-child{text-align:right;}
+.risk .names span.act{color:var(--orange);font-weight:700;}
+
+.res .k{font-size:11.5px;letter-spacing:.6px;font-weight:700;color:var(--navy);text-transform:uppercase;}
+.res .hint{font-size:12.5px;color:var(--muted);margin:4px 0 12px;}
+.res .row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.res .big{font-size:29px;font-weight:700;color:var(--ink);letter-spacing:-.5px;}
+.res .gain{background:var(--green-bg);color:var(--green);font-size:12.5px;font-weight:700;
+  border-radius:6px;padding:4px 8px;}
+.res .low{font-size:13px;color:var(--muted);margin:8px 0 12px;}
+.res svg{width:100%;height:150px;display:block;}
+.legend{display:flex;flex-direction:column;gap:5px;margin-top:8px;font-size:12px;color:var(--ink);}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:1px;}
+.disc{font-size:10.5px;line-height:1.5;color:#8A9299;margin-top:12px;}
+
+/* ---------- callout aide ---------- */
+.callout{background:#D6E9F5;border-radius:10px;padding:14px;margin-top:4px;}
+.callout h4{margin:0 0 6px;font-size:14px;color:var(--navy);display:flex;gap:7px;align-items:center;}
+.callout p{margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--navy-deep);}
+.callout .num{font-size:12.5px;font-weight:700;color:var(--navy);margin:10px 0 6px;}
+.callout button{
+  width:100%;background:#fff;border:1px solid var(--navy);border-radius:8px;
+  padding:11px;font-size:13.5px;color:var(--navy);font-weight:600;margin-bottom:4px;
+}
+.callout button.alt{border-color:var(--orange);color:var(--orange);}
+
+/* ---------- reco ---------- */
+.reco-h{text-align:center;padding:6px 16px 14px;}
+.reco-h h1{font-size:19px;color:var(--navy);margin:6px 0 4px;font-weight:700;line-height:1.35;}
+.reco-h h1 b{color:var(--orange);}
+.reco-h .strat{font-size:13.5px;color:var(--navy);font-weight:600;}
+/* vitrine statique : les contrats voisins dépassent de part et d'autre, non cliquables */
+.carou{display:flex;justify-content:center;align-items:center;gap:14px;padding:0 0 12px;
+  overflow:hidden;pointer-events:none;}
+.ct{flex:0 0 auto;width:238px;background:var(--navy);border:1px solid var(--navy);border-radius:10px;
+  padding:14px;display:flex;align-items:center;gap:12px;font-size:14px;color:#fff;font-weight:600;
+  white-space:nowrap;}
+.ct.side{background:#fff;border-color:var(--line);color:var(--muted);font-weight:500;width:132px;}
+.ct .sq{width:44px;height:44px;border-radius:7px;background:#fff;flex:0 0 auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--navy);line-height:1.1;}
+.ct.side .sq{background:var(--bg);}
+.ct .sq em{font-style:normal;font-size:8px;color:var(--orange);}
+.dots{display:flex;justify-content:center;gap:6px;padding:0 0 14px;}
+.dots i{width:6px;height:6px;border-radius:50%;background:#D3D7DA;}
+.dots i.on{background:var(--navy);}
+/* réassurance */
+.reas{margin-top:6px;background:var(--bg);border-radius:10px;padding:12px 14px;}
+.reas .r{display:flex;gap:11px;align-items:flex-start;font-size:12.5px;line-height:1.45;
+  color:var(--ink);padding:7px 0;}
+.reas .r span.i{color:var(--navy);flex:0 0 auto;font-size:14px;line-height:1.2;}
+.vthumb{position:relative;border-radius:8px;overflow:hidden;background:linear-gradient(120deg,#3B2350,#7A2E86 55%,#C2410C);
+  height:132px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
+.vthumb .ttl{position:absolute;left:12px;bottom:14px;color:#fff;font-weight:800;font-size:17px;
+  letter-spacing:.4px;line-height:1.1;text-shadow:0 2px 6px rgba(0,0,0,.4);}
+.vthumb .ttl small{display:block;font-size:9px;font-weight:600;letter-spacing:1.4px;opacity:.85;}
+.vthumb .play{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.92);
+  display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:16px;z-index:2;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.tags span{font-size:10.5px;color:#fff;border-radius:4px;padding:3px 7px;font-weight:600;}
+.kv{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid #F0F2F3;}
+.kv:last-child{border-bottom:none;}
+.kv .v{font-weight:600;}
+.pjrecall{background:#EDEFF1;border-radius:12px;padding:16px;margin:0 16px 14px;}
+.pjrecall h4{margin:0 0 12px;font-size:14px;color:var(--navy);text-align:center;font-weight:700;}
+.pjrecall .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch;}
+.pjrecall .box{background:#fff;border-radius:10px;padding:14px 12px;text-align:center;
+  display:flex;flex-direction:column;}
+.pjrecall .box.dark{background:var(--navy);color:#fff;}
+.pjrecall .box .n{font-size:21px;font-weight:700;color:var(--ink);letter-spacing:-.4px;}
+.pjrecall .box.dark .n{color:#fff;}
+.pjrecall .box .t{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.35;}
+.pjrecall .box.dark .t{color:#D3E1E9;}
+.pjrecall .box .lnk{margin-top:auto;padding-top:10px;font-size:11.5px;font-weight:700;
+  color:var(--navy);text-decoration:underline;text-underline-offset:2px;}
+.pjrecall .box.dark .lnk{color:#fff;}
+
+/* app landing (natif iOS) */
+.applp{flex:1;display:flex;flex-direction:column;background:#fff;padding:0 22px 26px;overflow-y:auto;}
+.applp .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px 0;}
+.applp .hero img{width:56px;height:76px;margin-bottom:20px;}
+.applp h1{margin:0 0 10px;font-size:25px;font-weight:800;color:var(--navy);line-height:1.2;}
+.applp .sub{margin:0 0 22px;font-size:14px;line-height:1.5;color:var(--muted);max-width:290px;}
+.applp .pts{display:flex;flex-direction:column;gap:10px;width:100%;text-align:left;}
+.applp .pts div{display:flex;gap:10px;font-size:13px;color:var(--ink);line-height:1.4;}
+.applp .pts b{color:var(--orange);flex:0 0 auto;}
+.applp .alt{width:100%;text-align:center;padding:12px;font-size:14px;color:var(--navy);
+  font-weight:600;text-decoration:underline;text-underline-offset:3px;}
+.warnline{display:flex;gap:9px;background:var(--warm);border-radius:8px;padding:11px 13px;
+  margin:0 16px 14px;font-size:12.5px;color:var(--ink);font-weight:600;line-height:1.4;}
+.ghost{width:calc(100% - 32px);margin:0 16px 16px;background:#fff;border:1px solid var(--orange);
+  border-radius:8px;padding:12px;color:var(--orange);font-size:13.5px;font-weight:600;}
+
+/* ---------- overlays ---------- */
+.ov{position:absolute;inset:0;z-index:80;display:none;}
+.ov.open{display:flex;}
+.ov .bd{position:absolute;inset:0;background:rgba(20,26,32,.55);}
+.ov .sheet{
+  position:relative;margin:auto;width:calc(100% - 32px);max-height:calc(100% - 60px);
+  background:#fff;border-radius:14px;overflow-y:auto;
+}
+.ov.full .sheet{width:100%;height:100%;max-height:100%;border-radius:0;margin:0;}
+.msheet{padding:22px 20px 20px;}
+.msheet h2{margin:0 0 10px;font-size:21px;color:var(--navy);line-height:1.3;}
+.msheet p.s{margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--muted);}
+.msheet .em{position:relative;margin-bottom:12px;}
+.msheet .em input{width:100%;padding:13px 40px 13px 14px;border:1.5px solid var(--orange);
+  border-radius:8px;font-size:14px;}
+.msheet .em .ic{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--navy);}
+.btn-prim{width:100%;background:var(--orange);color:#fff;font-weight:600;font-size:15px;
+  border-radius:8px;padding:14px;margin-bottom:10px;}
+.btn-sec{width:100%;background:#fff;border:1px solid var(--navy);color:var(--navy);font-weight:600;
+  font-size:15px;border-radius:8px;padding:14px;margin-bottom:12px;}
+.legal{font-size:11.5px;line-height:1.5;color:var(--muted);margin:0 0 12px;}
+.legal a{color:var(--navy);}
+.remind{background:var(--warm);border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.5;color:var(--ink);}
+
+/* help center */
+.hc-bar{background:#fff;padding:16px 18px;flex:0 0 auto;position:sticky;top:0;z-index:5;}
+.hc-bar button{width:30px;height:30px;font-size:22px;color:var(--ink);line-height:1;
+  display:flex;align-items:center;justify-content:center;}
+.hc-top{background:var(--navy);color:#fff;padding:8px 18px 22px;position:relative;}
+.hc-top .ill{width:62px;height:62px;border-radius:50%;background:#fff;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.hc-top .ill svg{display:block;}
+.hc-top h2{margin:0 0 8px;font-size:18px;text-align:center;font-weight:700;}
+.hc-top p{margin:0 0 16px;font-size:13px;text-align:center;opacity:.9;line-height:1.45;}
+.hc-srch{position:relative;}
+.hc-search{width:100%;border-radius:8px;border:none;padding:13px 42px 13px 14px;font-size:13.5px;}
+.hc-srch .mg{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--navy);}
+.hc-sub{background:var(--bg);border-radius:8px;padding:13px;margin-bottom:10px;}
+.hc-sub h4{margin:0 0 4px;font-size:14px;color:var(--navy);font-weight:700;}
+.hc-sub p{margin:0 0 10px;font-size:12px;line-height:1.45;color:var(--muted);}
+.hc-foot{text-align:center;padding:16px 14px 22px;font-size:11.5px;color:var(--muted);line-height:2;}
+.hc-foot a{color:var(--navy);text-decoration:underline;}
+.hc-more{display:block;margin-top:12px;color:var(--orange);font-size:13px;font-weight:600;
+  text-decoration:underline;text-underline-offset:3px;}
+.hc-body{padding:22px 14px 0;background:var(--bg);display:flex;flex-direction:column;gap:26px;}
+.hc-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 14px;position:relative;}
+.hc-card.reco{border-color:var(--orange);}
+.hc-card.ok{border-color:#9ED3B4;}
+.hc-card.off{border-color:#E88A85;}
+.hc-btn.navy{background:#fff;border:1px solid var(--navy);color:var(--navy);}
+.badge{position:absolute;top:-9px;left:14px;font-size:10.5px;font-weight:700;border-radius:20px;padding:3px 9px;}
+.badge.o{background:var(--warm);color:var(--orange-dark);}
+.badge.g{background:var(--green-bg);color:var(--green);}
+.badge.r{background:var(--red-bg);color:#C0392B;}
+.hc-card h3{margin:6px 0 6px;font-size:15px;color:var(--navy);display:flex;gap:9px;align-items:center;}
+.hc-card .ic{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:14px;}
+.hc-card p{margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--muted);}
+.hc-btn{width:100%;border-radius:8px;padding:11px;font-size:13.5px;font-weight:600;margin-bottom:8px;}
+.hc-btn.fill{background:var(--orange);color:#fff;}
+.hc-btn.line{background:#fff;border:1px solid var(--orange);color:var(--orange);}
+.hc-btn:last-child{margin-bottom:0;}
+.tabs{display:flex;gap:7px;margin:10px 0 12px;flex-wrap:wrap;}
+.tab{font-size:11.5px;border-radius:20px;padding:6px 11px;background:#EDEFF1;color:var(--muted);}
+.tab.on{background:var(--orange);color:#fff;font-weight:600;}
+.faq{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 0;
+  border-bottom:1px solid #F0F2F3;font-size:13px;color:var(--ink);}
+.faq:last-of-type{border-bottom:none;}
+.faq i{color:var(--orange);font-style:normal;}
+
+/* ---------- content screens ---------- */
+.transition{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:#fff;text-align:center;padding:0 30px;}
+.transition h2{font-size:26px;font-weight:400;color:var(--ink);line-height:1.3;margin:0 0 22px;}
+.transition a{color:var(--navy);font-weight:600;font-size:16px;cursor:pointer;
+  text-decoration:underline;text-underline-offset:4px;}
+.transition a .ar{text-decoration:none;display:inline-block;margin-left:5px;}
+.transition a:hover{color:var(--navy-deep);}
+.toast{position:absolute;left:0;right:0;bottom:0;background:#1E7A47;color:#fff;
+  padding:16px;text-align:center;font-size:13px;z-index:40;}
+/* ---------- bulle Linx'IA (Intercom) ---------- */
+.bub{
+  position:absolute;right:14px;bottom:88px;width:56px;height:56px;border-radius:50%;
+  background:var(--navy);box-shadow:0 4px 14px rgba(18,58,80,.35);z-index:65;
+  display:none;align-items:center;justify-content:center;transition:transform .15s, box-shadow .15s;
+}
+.bub.show{display:flex;}
+.bub:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(18,58,80,.45);}
+.bub:active{transform:scale(.96);}
+.bub .dot{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;
+  background:#E03B2F;border:2px solid #fff;}
+
+/* ---------- chat Linx'IA ---------- */
+.chat{height:100%;display:flex;flex-direction:column;background:#fff;}
+.chat .top{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);}
+.chat .top .nav2{font-size:19px;color:var(--ink);}
+.chat .top .av{width:34px;height:34px;border-radius:8px;background:#F1F3F4;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;}
+.chat .top .av img{width:17px;height:23px;}
+.chat .top h3{flex:1;margin:0;font-size:16px;font-weight:700;color:var(--ink);}
+.chat .top button{font-size:18px;color:var(--ink);width:26px;height:26px;}
+.chat .body{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:16px;}
+.chat .note{text-align:center;font-size:12px;color:var(--muted);margin:2px 0 0;}
+.chat .bot{background:#F1F3F4;border-radius:12px;padding:14px;font-size:13.5px;line-height:1.55;
+  color:var(--ink);max-width:88%;align-self:flex-start;}
+.chat .bot .warn{display:block;margin-top:12px;font-style:italic;color:#4A545C;font-size:13px;}
+.chat .bot a{color:var(--navy);text-decoration:underline;}
+.chat .me2{background:var(--navy);color:#fff;border-radius:12px;padding:13px 15px;font-size:13.5px;
+  line-height:1.5;max-width:86%;align-self:flex-end;}
+.chat .foot{padding:10px 14px 14px;}
+.chat .inp{border:1px solid var(--line);border-radius:12px;padding:14px 14px 10px;background:#fff;}
+.chat .inp .ph{font-size:15px;color:#98A0A7;margin-bottom:14px;}
+.chat .inp .row2{display:flex;align-items:center;justify-content:space-between;color:var(--muted);}
+.chat .inp .send{width:34px;height:34px;border-radius:50%;background:#EDEFF1;color:#98A0A7;
+  display:flex;align-items:center;justify-content:center;font-size:15px;}
+.chat .inp{cursor:pointer;transition:border-color .15s;}
+.chat .inp:hover{border-color:var(--navy);}
+.chat .inp.done{cursor:default;opacity:.65;}
+.chat .typing{background:#F1F3F4;border-radius:12px;padding:14px 16px;align-self:flex-start;display:flex;gap:5px;}
+.chat .typing i{width:7px;height:7px;border-radius:50%;background:#A8B0B7;animation:bl 1.1s infinite;}
+.chat .typing i:nth-child(2){animation-delay:.18s;}
+.chat .typing i:nth-child(3){animation-delay:.36s;}
+@keyframes bl{0%,60%,100%{opacity:.3}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.chat .typing i{animation:none;opacity:.6}}
+
+.gtoast{position:absolute;left:12px;right:12px;bottom:96px;background:#1E7A47;color:#fff;
+  padding:13px 16px;border-radius:9px;text-align:center;font-size:12.5px;line-height:1.4;z-index:70;
+  opacity:0;transform:translateY(8px);pointer-events:none;transition:.25s;}
+.gtoast.on{opacity:1;transform:none;}
+
+/* CGPT */
+.gpt{background:#fff;height:100%;display:flex;flex-direction:column;}
+.gpt .bar{padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;color:#111;}
+.gpt .body{flex:1;overflow-y:auto;padding:16px;font-size:13px;line-height:1.6;color:#232323;}
+.gpt .me{background:#EDF1F6;border-radius:14px;padding:12px 14px;margin:0 0 18px;font-size:13px;}
+.gpt h4{margin:16px 0 6px;font-size:14px;}
+.gpt ul{margin:6px 0 12px;padding-left:18px;}
+.gpt li{margin-bottom:4px;}
+.gpt .src{display:inline-block;background:#F0F2F4;border-radius:20px;padding:2px 8px;
+  font-size:10.5px;color:#666;margin-right:5px;}
+.gpt .lk{color:#0B6BCB;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:700;}
+.gpt h4 .lk{font-weight:700;}
+
+/* landing */
+.urlbar.gpt-chrome{background:#fff;padding:10px 12px 12px;}
+.urlbar.gpt-chrome .pill{background:#fff;box-shadow:none;font-size:15px;font-weight:600;color:#111;height:34px;}
+.urlbar.gpt-chrome .pill .x{position:absolute;left:0;width:34px;height:34px;border-radius:50%;
+  background:#F0F1F3;font-size:15px;color:#111;display:flex;align-items:center;justify-content:center;}
+.urlbar.gpt-chrome .pill .rd{position:absolute;right:0;width:34px;height:34px;border-radius:50%;
+  background:#F0F1F3;font-size:13px;color:#111;display:flex;align-items:center;justify-content:center;}
+.promo{background:var(--navy);color:#fff;padding:14px 18px 12px;text-align:center;
+  font-size:12.5px;line-height:1.5;}
+.promo b{color:var(--orange);}
+.promo .more{display:block;margin-top:6px;color:var(--orange);font-weight:600;}
+.lp-nav{background:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-bottom:1px solid var(--line);}
+.lp-crumb{background:#fff;padding:9px 14px;font-size:11.5px;color:var(--muted);border-bottom:1px solid var(--line);}
+.lp-hero{background:#4E8FB5;color:#fff;padding:22px 18px 26px;}
+.lp-hero h1{margin:0 0 6px;font-size:27px;font-weight:800;}
+.lp-hero .sub{font-size:14px;margin-bottom:16px;opacity:.95;}
+.lp-hero .ck{display:flex;gap:9px;font-size:13px;margin-bottom:11px;line-height:1.45;}
+.lp-hero .ck b{color:#FFD9A8;}
+.lp-cta{width:100%;background:var(--orange);color:#fff;border-radius:8px;padding:14px;
+  font-weight:600;font-size:15px;margin-top:8px;}
+.lp-cta2{width:100%;background:transparent;border:1px solid #fff;color:#fff;border-radius:8px;
+  padding:13px;font-weight:600;font-size:14px;margin-top:10px;}
+.lp-dl{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;padding:12px 14px;z-index:30;}
+.lp-dl p{margin:0;flex:1;font-size:12.5px;line-height:1.35;color:var(--ink);}
+.lp-dl p b{font-weight:700;}
+.lp-dl button{background:#fff;border:1px solid var(--orange);color:var(--orange);
+  border-radius:8px;padding:10px 14px;font-size:13px;font-weight:700;flex:0 0 auto;}
+
+/* app store */
+.as{background:#fff;height:100%;padding:20px 18px;overflow-y:auto;}
+.as .top{display:flex;gap:14px;align-items:center;margin-bottom:18px;}
+.as .icon{width:76px;height:76px;border-radius:18px;background:#EEF0F2;border:1px solid var(--line);
+  flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+.as .top h2{margin:0 0 3px;font-size:18px;}
+.as .top p{margin:0;font-size:12.5px;color:var(--muted);}
+.as .get{background:#0071E3;color:#fff;border-radius:20px;padding:7px 20px;font-size:14px;font-weight:700;}
+.as .stats{display:flex;justify-content:space-between;border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:16px;text-align:center;}
+.as .stats div{flex:1;}
+.as .stats .v{font-size:15px;font-weight:700;color:var(--muted);}
+.as .stats .l{font-size:10.5px;color:#9AA1A7;text-transform:uppercase;letter-spacing:.4px;}
+.as .protolink{margin-top:26px;}
+
+/* signup + info */
+.recap{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin:18px 16px 16px;}
+.infoi{font-weight:900;font-size:14px;color:var(--navy);}
+.recap .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.recap .hd .t{font-size:11px;letter-spacing:.6px;font-weight:700;color:var(--navy);text-transform:uppercase;}
+.recap .hd button{font-size:13px;color:var(--navy);text-decoration:underline;}
+.seg{display:flex;border-bottom:1px solid var(--line);margin:0 16px 16px;}
+.seg button{flex:1;padding:11px 0;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;}
+.seg button.on{color:var(--navy);font-weight:700;border-bottom-color:var(--orange);}
+.lbl{display:block;font-size:13px;color:var(--ink);margin:0 0 6px;}
+.fgrp{margin:0 16px 14px;}
+.check{display:flex;gap:10px;align-items:flex-start;margin:0 16px 14px;font-size:11.5px;
+  line-height:1.5;color:var(--muted);}
+.check .bx{width:19px;height:19px;border-radius:4px;border:1.5px solid #B9C0C6;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;}
+.check .bx.on{background:var(--orange);border-color:var(--orange);}
+.infobox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px;margin:0 16px 14px;}
+.infobox .hd{display:flex;gap:9px;align-items:center;font-size:13px;color:var(--navy);font-weight:600;margin-bottom:9px;}
+.infobox .hd .ii{font-size:19px;font-weight:900;line-height:1;flex:0 0 auto;}
+.nextnote{font-size:11.5px;color:var(--muted);text-align:center;margin:0 16px 16px;line-height:1.5;}
+
+/* ---------- login iOS + reprise ---------- */
+.ios{flex:1;overflow-y:auto;background:var(--bg);}
+.ios-hdr{background:#fff;display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;border-bottom:1px solid var(--line);}
+.ios-hdr .icons{display:flex;gap:16px;align-items:center;color:var(--navy);}
+.login{padding:26px 24px 30px;background:#fff;min-height:100%;}
+.login .brand{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:22px;}
+.login .brand img{width:24px;height:32px;}
+.login .brand span{font-size:19px;font-weight:600;letter-spacing:2.4px;color:var(--navy);}
+.login h1{margin:0 0 26px;font-size:22px;font-weight:700;color:var(--navy);text-align:center;}
+.login .lbl{display:block;font-size:13px;color:var(--ink);margin:0 0 6px;}
+.login .fld{margin-bottom:16px;position:relative;}
+.login .fld .eye{position:absolute;right:14px;top:38px;color:var(--navy);}
+.login .field{border-color:#B9C7D0;}
+.login .links{display:flex;justify-content:space-between;margin:-8px 0 18px;}
+.login .links a{font-size:12.5px;color:var(--navy);text-decoration:underline;text-underline-offset:3px;}
+.login .rem{display:flex;align-items:center;gap:11px;font-size:13.5px;color:var(--ink);margin-bottom:20px;}
+.login .rem .bx{width:21px;height:21px;border-radius:5px;background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto;}
+.login .card{margin:22px 0 0;padding:18px 20px;}
+.login .becli{display:block;width:100%;text-align:left;background:#fff;
+  border:1px solid var(--line);border-radius:10px;transition:border-color .15s, background .15s;}
+.login .becli:hover{border-color:var(--orange);background:#FFFBF7;}
+.login .becli:active{background:var(--warm);}
+.login .becli:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+.login .card .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.login .card .h b{font-size:15px;color:var(--navy);}
+.login .card .h i{color:var(--orange);font-style:normal;font-size:17px;}
+.login .card p{margin:0;font-size:12.5px;line-height:1.5;color:var(--muted);}
+.midcard{background:#fff;border-radius:12px;padding:24px 22px;margin:26px 18px 0;text-align:center;}
+.midcard .bk{position:absolute;left:22px;color:var(--navy);font-size:18px;}
+.midcard h2{margin:0 0 10px;font-size:19px;font-weight:700;color:var(--navy);}
+.midcard p.s{margin:0 0 20px;font-size:13px;line-height:1.5;color:var(--muted);}
+.midcard .lbl{display:block;text-align:left;font-size:13px;color:var(--ink);margin:0 0 6px;}
+.midcard .env{margin:0 auto 16px;width:74px;height:58px;display:flex;align-items:center;justify-content:center;}
+.midcard .again{display:inline-block;margin-top:12px;font-size:13px;color:var(--navy);
+  text-decoration:underline;text-underline-offset:3px;}
+/* liens de navigation du prototype : bleu Linxea (8,5:1 sur blanc) + flèche */
+.protolink{display:block;text-align:center;margin:20px 18px 0;font-size:13px;font-weight:600;
+  color:var(--navy);text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+.protolink .ar{text-decoration:none;display:inline-block;margin-left:4px;}
+.protolink:hover{color:var(--navy-deep);}
+
+.endcard{background:#fff;border-radius:12px;padding:22px;margin:auto 18px;text-align:left;}
+.endcard h2{margin:0 0 14px;font-size:17px;letter-spacing:.5px;color:var(--ink);}
+.endcard p{margin:0 0 12px;font-size:13px;line-height:1.55;color:var(--muted);}
+</style>
+<style id="cs-badge-style">
+#cs-badge{position:fixed;top:0;left:0;right:0;height:16px;z-index:2147483647;
+ background:#1A5169;color:#fff;text-align:center;pointer-events:none;
+ font:600 10px/16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ letter-spacing:.06em;text-transform:uppercase;}
+html{height:100%}
+body{padding-top:16px!important;box-sizing:border-box!important;height:100%!important}
+.device{height:100%!important;max-height:100%!important}
+</style>
+</head>
+<body>
+<div id="cs-badge">Prototype d’étude de cas · service non réel</div>
+
+<div class="device">
+  <div class="notch"></div>
+  <div class="statusbar">
+    <span class="t">11:32
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M21.4 2.6 3.1 10.4c-1 .4-.9 1.9.2 2.1l7.4 1.6 1.6 7.4c.2 1.1 1.7 1.2 2.1.2L22.2 3.4c.3-.7-.4-1.4-1-1z"/></svg>
+    </span>
+    <span class="sysicons" aria-hidden="true">
+      <!-- réseau -->
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="#000">
+        <rect x="0"    y="8"   width="3" height="4"   rx="1"/>
+        <rect x="4.7"  y="5.6" width="3" height="6.4" rx="1"/>
+        <rect x="9.4"  y="3.2" width="3" height="8.8" rx="1"/>
+        <rect x="14.1" y="0.6" width="3" height="11.4" rx="1"/>
+      </svg>
+      <!-- wi-fi -->
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="#000" stroke-linecap="round">
+        <path d="M1.2 3.9a11 11 0 0 1 14.6 0"   stroke-width="2.1"/>
+        <path d="M4.1 7a6.9 6.9 0 0 1 8.8 0"     stroke-width="2.1"/>
+        <path d="M7 10.1a2.5 2.5 0 0 1 3 0"      stroke-width="2.1"/>
+      </svg>
+      <!-- batterie -->
+      <svg width="29" height="14" viewBox="0 0 29 14">
+        <rect x="0.5" y="0.5" width="26" height="13" rx="4.2" fill="#000"/>
+        <path d="M27.8 4.9v4.2a2.6 2.6 0 0 0 0-4.2z" fill="#000" opacity=".4"/>
+        <text x="13.4" y="10.4" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif"
+              font-size="9.4" font-weight="600" fill="#fff">87</text>
+      </svg>
+    </span>
+  </div>
+  <div class="viewport" id="vp">
+
+  <!-- ===================== 1 · CHATGPT ===================== -->
+  <section class="screen active" id="sCgpt">
+    <div class="gpt">
+      <div class="bar">ChatGPT</div>
+      <div class="body">
+        <div class="me">je veux placer mon épargne en améliorant les performances, on me parle d'assurance vie, que me conseilles-tu comme assurance vie en ayant le moins de frais possible et de bonnes performances ?</div>
+        <p>Oui. Si ton objectif est de <b>faire mieux travailler ton épargne tout en limitant au maximum les frais</b>, l'assurance-vie peut être intéressante, mais je ne choisirais surtout pas un contrat bancaire classique avec 2–3 % de frais sur versement et 1 % de frais de gestion.</p>
+        <p>En 2026, <b>mon premier choix à regarder serait <a class="lk" onclick="go('sLanding')">Linxea Spirit 2</a></b>, avec Lucya Cardif comme excellente alternative.</p>
+        <h4>🥇 1. <a class="lk" onclick="go('sLanding')">Linxea Spirit 2</a> — mon choix n°1</h4>
+        <p>Pourquoi je le trouve particulièrement intéressant :</p>
+        <ul>
+          <li><b>0 % de frais de versement</b></li>
+          <li><b>0 % de frais d'arbitrage en ligne</b></li>
+          <li><b>0,50 %/an de frais sur les unités de compte</b></li>
+          <li>Plus de <b>1 100 supports</b>, notamment ETF, actions, SCPI…</li>
+          <li>Deux fonds euros</li>
+          <li>Assureur : <b>Spirica</b>, filiale de Crédit Agricole Assurances</li>
+        </ul>
+        <p><span class="src">Finance Héros</span><span class="src">Linxea</span><span class="src">Lucya</span></p>
+        <h4>Mais surtout : la performance dépend de ce que tu mets dedans</h4>
+        <p>Une assurance-vie n'est <b>pas un placement en soi</b>, c'est plutôt une <b>enveloppe fiscale</b>.</p>
+        <p><b>Attention toutefois</b> : les performances passées ne garantissent évidemment pas celles à venir.</p>
+        <p style="text-align:center;font-size:11px;color:#9AA1A7;margin-top:8px">Le lien s'ouvre dans le navigateur intégré de ChatGPT</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 2 · LANDING SPIRIT 2 ===================== -->
+  <section class="screen" id="sLanding">
+    <div class="urlbar gpt-chrome">
+      <div class="pill">
+        <button class="x" onclick="go('sCgpt')" aria-label="Fermer">&#10005;</button>
+        linxea.com
+        <span class="rd">&#9707;</span>
+      </div>
+    </div>
+    <div class="scroll" style="padding-bottom:78px">
+      <div class="promo"><b>100 € offerts</b> sous conditions pour l'ouverture d'un contrat Linxea Spirit 2 pour votre enfant mineur<span class="more">&#8250; En savoir plus</span></div>
+      <div class="lp-nav">
+        <div style="display:flex;align-items:center;gap:9px">
+          <span style="font-size:20px">&#9776;</span>
+          <img class="lgo" alt="Linxea" style="width:24px;height:32px">
+          <span style="font-size:17px;font-weight:600;letter-spacing:2px;color:var(--navy)">LINXEA</span>
+        </div>
+        <button onclick="go('sStep1')" style="background:var(--orange);color:#fff;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600">Souscrire</button>
+      </div>
+      <div class="lp-crumb">Accueil &nbsp;›&nbsp; Assurance vie &nbsp;›&nbsp; <b style="color:var(--ink)">Linxea Spirit 2</b></div>
+      <div class="lp-hero">
+        <h1>Linxea Spirit 2</h1>
+        <div class="sub">L'un des meilleurs contrats d'assurance-vie</div>
+        <div class="ck"><b>&#10003;</b><span>0 % de frais de versement et d'arbitrage en ligne <sup>(1)</sup></span></div>
+        <div class="ck"><b>&#10003;</b><span>Seulement 0,5 % de frais de gestion / an sur les unités de compte (UC)</span></div>
+        <div class="ck"><b>&#10003;</b><span>+ de 1 100 supports disponibles (ETF, Private Equity, Actions, SCPI…)</span></div>
+        <button class="lp-cta" onclick="go('sStep1')">Souscrire en ligne &nbsp;→</button>
+        <button class="lp-cta2">En savoir plus</button>
+      </div>
+      <div style="padding:18px 16px;background:#fff">
+        <div style="font-size:11px;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Taux de participation aux bénéfices net <sup>(2)</sup></div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">En 2025 du fonds euro Objectif Climat, du fonds euro Nouvelle Génération et des unités de compte disponibles au contrat.</div>
+      </div>
+    </div>
+    <div class="lp-dl">
+      <p><b>L'application Linxea</b> est disponible sur votre smartphone</p>
+      <button onclick="go('sTrans1')">&#8681; Télécharger</button>
+    </div>
+  </section>
+
+  <!-- ===================== 3 · TRANSITION ===================== -->
+  <section class="screen" id="sTrans1">
+    <div class="transition">
+      <h2>Après avoir exploré la landing page</h2>
+      <a onclick="go('sStore')">L'utilisateur télécharge l'app sur l'App Store iOS <span class="ar">&#8594;</span></a>
+    </div>
+  </section>
+
+  <!-- ===================== 4 · APP STORE ===================== -->
+  <section class="screen" id="sStore">
+    <div class="as">
+      <div class="top">
+        <div class="icon"><img class="lgo" alt="" style="width:44px;height:59px"></div>
+        <div style="flex:1">
+          <h2>Linxea</h2>
+          <p>Épargne &amp; assurance-vie</p>
+          <div style="margin-top:8px"><span class="get">OBTENIR</span></div>
+        </div>
+      </div>
+      <div class="stats">
+        <div><div class="v">4,6</div><div class="l">★★★★☆</div></div>
+        <div><div class="v">4+</div><div class="l">Âge</div></div>
+        <div><div class="v">N°12</div><div class="l">Finance</div></div>
+      </div>
+      <div style="font-size:13px;line-height:1.6;color:var(--muted)">
+        Suivez votre épargne, ouvrez un contrat en quelques minutes et retrouvez vos projets où que vous soyez.
+      </div>
+      <a class="protolink" onclick="go('sApp')">L'utilisateur installe puis ouvre l'application <span class="ar">&#8594;</span></a>
+    </div>
+  </section>
+
+  <!-- ============ 4b · SPLASH SCREEN APP iOS (natif — pas de web view) ============ -->
+  <section class="screen" id="sApp">
+    <div class="applp">
+      <div class="hero">
+        <img class="lgo" alt="Linxea">
+        <h1>Faites travailler votre épargne</h1>
+        <p class="sub">Ouvrez un contrat d'assurance-vie en ligne, sans frais de versement, et suivez-le depuis votre téléphone.</p>
+        <div class="pts">
+          <div><b>&#10003;</b><span>0 % de frais de versement et d'arbitrage en ligne</span></div>
+          <div><b>&#10003;</b><span>Plus de 1 100 supports (ETF, SCPI, actions, Private Equity)</span></div>
+          <div><b>&#10003;</b><span>Gestion libre ou gestion pilotée, dès 500 €</span></div>
+        </div>
+      </div>
+      <button class="btn-prim" style="margin-bottom:0" onclick="go('sLogin')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 5 · ÉTAPE 1/12 ===================== -->
+  <section class="screen" id="sStep1">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="0"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:10%"></span></div><div class="step">Étape 1/10</div></div>
+      <div class="q">
+        <h1>Pour qui souhaitez-vous souscrire ?</h1>
+        <button class="opt" data-g="g1" onclick="pick(this,'sStep2')">Pour moi</button>
+        <button class="opt" data-g="g1" onclick="pick(this,'sStep2')">Pour mon enfant mineur</button>
+        <div class="errmsg" id="e1">Veuillez sélectionner une réponse.</div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStore')">&#8592; Précédent</button>
+      <button class="cta" onclick="need('g1','e1','sStep2')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 6 · ÉTAPE 2/12 ===================== -->
+  <section class="screen" id="sStep2">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="0"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:20%"></span></div><div class="step">Étape 2/10</div></div>
+      <div class="q">
+        <h1>Pourquoi souhaitez-vous mettre de l'argent de côté ?</h1>
+        <div class="hint">Sélectionnez votre/vos projets par ordre de priorité (3 maximum)</div>
+        <button class="opt" data-g="g2" onclick="pickMulti(this)">Placer efficacement mes économies</button>
+        <button class="opt" data-g="g2" onclick="pickMulti(this)">Transmettre mon patrimoine</button>
+        <button class="opt" data-g="g2" onclick="pickMulti(this)">Prévoir ma retraite</button>
+        <button class="opt" data-g="g2" onclick="pickMulti(this)">Anticiper en cas de coup dur</button>
+        <button class="opt" data-g="g2" onclick="pickMulti(this)">Réduire mes impôts</button>
+        <div class="errmsg" id="e2">Veuillez sélectionner au moins un projet.</div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStep1')">&#8592; Précédent</button>
+      <button class="cta" onclick="need('g2','e2','sProjet')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 7 · ÉTAPE 3/12 — PROJET + PROJECTION ===================== -->
+  <section class="screen" id="sProjet">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="0"></div>
+    <div class="scroll">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:30%"></span></div><div class="step">Étape 3/10</div></div>
+      <div class="pj-intro">
+        <h1>Construisons votre projet</h1>
+        <p>Renseignez ces trois informations : votre projection s'affiche juste en dessous, et se met à jour en temps réel.</p>
+      </div>
+
+      <div class="card">
+        <div class="grp">
+          <div class="lab">Dépôt initial</div>
+          <div class="sub">Quel montant souhaitez-vous placer au départ ?</div>
+          <div class="inwrap"><input class="field" id="inDepot" type="number" inputmode="numeric" placeholder=""><span class="unit">€</span></div>
+          <div class="chips" data-for="inDepot">
+            <button class="chip" data-v="5000">5 000 €</button><button class="chip" data-v="10000">10 000 €</button>
+            <button class="chip" data-v="50000">50 000 €</button><button class="chip" data-v="100000">100 000 €</button>
+          </div>
+        </div>
+        <div class="grp">
+          <div class="lab">Versement mensuel</div>
+          <div class="sub">Combien souhaitez-vous investir chaque mois ?</div>
+          <div class="inwrap"><input class="field" id="inMens" type="number" inputmode="numeric" placeholder=""><span class="unit">€</span></div>
+          <div class="chips" data-for="inMens">
+            <button class="chip" data-v="100">100 €</button><button class="chip" data-v="200">200 €</button>
+            <button class="chip" data-v="500">500 €</button><button class="chip" data-v="1000">1 000 €</button>
+          </div>
+        </div>
+        <div class="grp">
+          <div class="lab">Horizon de placement</div>
+          <div class="sub">Dans combien de temps souhaitez-vous profiter de cet investissement ?</div>
+          <div class="inwrap"><input class="field" id="inHor" type="number" inputmode="numeric" placeholder=""><span class="unit">ans</span></div>
+          <div class="chips" data-for="inHor">
+            <button class="chip" data-v="2">2 ans</button><button class="chip" data-v="5">5 ans</button>
+            <button class="chip" data-v="10">10 ans</button><button class="chip" data-v="20">20 ans</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="warmbox">
+        <h4>Chez Linxea, rien n'est figé.</h4>
+        <p>• Votre épargne reste disponible : vous pouvez retirer à tout moment.</p>
+        <p>• Vos versements sont modulables et modifiables, sans frais.</p>
+        <p>• Votre argent peut être débloqué avant l'échéance, sans difficulté.</p>
+      </div>
+
+      <div class="sec-title">Votre projection</div>
+
+      <div class="card" id="pjEmpty">
+        <div class="empty">
+          <div class="circ">&#128269;</div>
+          <h3>Votre projection apparaîtra ici</h3>
+          <p>Complétez les informations ci-dessus pour découvrir l'évolution estimée de votre investissement.</p>
+          <a onclick="document.getElementById('inDepot').focus()">Remplir le formulaire <span class="ar">&#8593;</span></a>
+        </div>
+      </div>
+
+      <div class="card" id="pjFilled" style="display:none">
+        <div class="risk">
+          <div class="lab">Profil de risque</div>
+          <div class="sub">Vous explorez ici différents profils. Le vôtre sera déterminé à partir de votre situation.</div>
+          <div class="track2" id="riskTrack">
+            <div class="bar"><span class="fl" id="riskFill"></span></div>
+            <span class="kn" id="riskKnob"></span>
+          </div>
+          <div class="names" id="riskNames">
+            <span onclick="setProfil(0)">Défensif</span><span onclick="setProfil(1)">Équilibré</span>
+            <span onclick="setProfil(2)">Dynamique</span><span onclick="setProfil(3)">Agressif</span>
+          </div>
+        </div>
+        <div class="res">
+          <div class="k">Évolution de votre investissement</div>
+          <div class="hint" id="rHint">Profil Équilibré · hypothèse illustrative de 4,8 % / an</div>
+          <div class="row"><span class="big" id="rMoyen">—</span><span class="gain" id="rGain">—</span></div>
+          <div class="low">Scénario défavorable : <span id="rLow">—</span></div>
+          <svg id="chart" viewBox="0 0 600 200" preserveAspectRatio="none"></svg>
+          <div class="legend">
+            <div><i style="background:var(--orange)"></i>Capital avec plus-values et intérêts</div>
+            <div><i style="background:#B7B7BF"></i>Total de vos versements</div>
+          </div>
+          <div class="disc" id="rDisc">Simulation à caractère non contractuel, établie sur une hypothèse de performance annuelle moyenne de 4,8 %, nets de frais de gestion. Le scénario défavorable retient la moitié de cette hypothèse. Les performances passées ne préjugent pas des performances futures. Un investissement en unités de compte présente un risque de perte en capital.</div>
+        </div>
+      </div>
+      <div class="errmsg" id="e3" style="margin:0 16px 12px">Veuillez renseigner les trois informations.</div>
+
+      <div class="nav static">
+        <button class="back" onclick="go('sStep2')">&#8592; Précédent</button>
+        <button class="cta" onclick="fromProjet()">Continuer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 8 · ÉTAPE 6/12 ===================== -->
+  <section class="screen" id="sStep6">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="1"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:40%"></span></div><div class="step">Étape 4/10</div></div>
+      <div class="q">
+        <h1>Souhaitez-vous pouvoir disposer de l'argent avant l'horizon défini ?</h1>
+        <button class="opt" data-g="g6" onclick="pick(this,'sStep7')">Oui, je dois pouvoir disposer de cet argent à tout moment</button>
+        <button class="opt" data-g="g6" onclick="pick(this,'sStep7')">Oui, je dois pouvoir retirer une partie (50%) de mon argent à tout moment</button>
+        <button class="opt" data-g="g6" onclick="pick(this,'sStep7')">Non, j'ai d'autres économies disponibles rapidement</button>
+        <div class="errmsg" id="e6">Veuillez sélectionner une réponse.</div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sProjet')">&#8592; Précédent</button>
+      <button class="cta" onclick="need('g6','e6','sStep7')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 9 · ÉTAPE 7/12 ===================== -->
+  <section class="screen" id="sStep7">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="1"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:50%"></span></div><div class="step">Étape 5/10</div></div>
+      <div class="q">
+        <h1>Quelle est votre date de naissance ?</h1>
+        <input class="field" id="inBirth" placeholder="JJ/MM/AAAA" value="15/03/1985">
+        <div class="errmsg" id="e7" style="margin-top:10px">Veuillez renseigner votre date de naissance.</div>
+        <div class="tipbox" style="margin-top:16px">
+          <div class="av">&#128105;</div>
+          <p>Nous vous posons cette question pour vous proposer un produit d'épargne en cohérence avec votre âge.</p>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStep6')">&#8592; Précédent</button>
+      <button class="cta" onclick="needVal('inBirth','e7','sStep8')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 10 · ÉTAPE 8/12 — moment clé ===================== -->
+  <section class="screen" id="sStep8">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="1"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:60%"></span></div><div class="step">Étape 6/10</div></div>
+      <div class="q">
+        <h1>Selon vous, la gestion de votre épargne est :</h1>
+        <button class="opt" data-g="g8" onclick="pick(this,'sStep9');hideCallout()">Facile, je peux me débrouiller seul(e)</button>
+        <button class="opt" data-g="g8" onclick="pick(this);showCallout()">Compliquée, je veux être accompagné(e)</button>
+        <div class="errmsg" id="e8">Veuillez sélectionner une réponse.</div>
+
+        <div class="callout" id="callout" style="display:none">
+          <h4>&#10067; Besoin d'aide ? on simplifie la suite</h4>
+          <p>Nos conseillers peuvent vous accompagner demain au <b>01 45 67 34 22</b> du lun-jeu 9h-18h et ven 9h-17h</p>
+          <div class="num">1- Gagnez du temps avec nos conseillers :</div>
+          <button onclick="openSave('sStep8')">Enregistrer mes réponses</button>
+          <div class="num">2- Puis contactez-nous :</div>
+          <button class="alt" onclick="openHelp(false)">Obtenir de l'aide</button>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStep7')">&#8592; Précédent</button>
+      <button class="cta" onclick="need('g8','e8','sStep9')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 11 · ÉTAPE 9/12 ===================== -->
+  <section class="screen" id="sStep9">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="1"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:70%"></span></div><div class="step">Étape 7/10</div></div>
+      <div class="q">
+        <h1>Quel type d'investisseur êtes-vous ?</h1>
+        <button class="opt" data-g="g9" onclick="setProfil(0);pick(this,'sStep10')">Je refuse de prendre des risques</button>
+        <button class="opt" data-g="g9" onclick="setProfil(1);pick(this,'sStep10')">J'accepte de prendre des risques limités</button>
+        <button class="opt" data-g="g9" onclick="setProfil(2);pick(this,'sStep10')">J'accepte de prendre des risques</button>
+        <div class="errmsg" id="e9">Veuillez sélectionner une réponse.</div>
+        <div class="tipbox" style="margin-top:6px">
+          <div class="av">&#128105;</div>
+          <p>Nous vous posons cette question pour vous proposer le meilleur produit d'épargne.</p>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStep8')">&#8592; Précédent</button>
+      <button class="cta" onclick="need('g9','e9','sStep10')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 12 · ÉTAPE 10/12 ===================== -->
+  <section class="screen" id="sStep10">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="1"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:80%"></span></div><div class="step">Étape 8/10</div></div>
+      <div class="q">
+        <h1>Seriez-vous intéressé(e) par un investissement dit responsable ?</h1>
+        <div style="display:flex;gap:12px">
+          <button class="opt" data-g="g10" style="flex:1" onclick="pick(this,'sReco')">Oui</button>
+          <button class="opt" data-g="g10" style="flex:1" onclick="pick(this,'sReco')">Non</button>
+        </div>
+        <div class="errmsg" id="e10">Veuillez sélectionner une réponse.</div>
+        <div style="background:#E4F3E9;border-radius:10px;padding:13px;display:flex;gap:11px;margin-top:6px">
+          <span style="font-size:17px">&#127793;</span>
+          <p style="margin:0;font-size:12.5px;line-height:1.5;color:#1F4D31">Un investissement dit responsable prend en compte des critères extra-financiers ESG (Environnementaux, Sociaux, Gouvernance) dans sa politique d'investissement. La prise en compte de ces critères pourrait avoir une incidence sur la performance de votre investissement.</p>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStep9')">&#8592; Précédent</button>
+      <button class="cta" onclick="need('g10','e10','sReco')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 13 · RECO 11/12 ===================== -->
+  <section class="screen" id="sReco">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="1"></div>
+    <div class="scroll pb">
+      <div class="prog"><div class="lbl">Projet</div><div class="track"><span class="fill" style="width:90%"></span></div><div class="step">Étape 9/10</div></div>
+      <div class="reco-h">
+        <h1>Nous vous recommandons le contrat <b>Linxea Spirit 2</b></h1>
+        <div class="strat">avec une stratégie : <span id="recoStrat">Gestion pilotée, profil Équilibré</span> — d'après vos réponses</div>
+      </div>
+      <div class="carou" aria-hidden="false">
+        <div class="ct side" aria-hidden="true"><div class="sq">Vie</div></div>
+        <div class="ct on"><div class="sq">Spirit<em>2</em></div>Linxea Spirit 2</div>
+        <div class="ct side" aria-hidden="true"><div class="sq">Zen</div></div>
+      </div>
+      <div class="dots"><i></i><i></i><i class="on"></i><i></i></div>
+
+      <div class="card">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:6px">Souscrivez un contrat d'assurance vie</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.5">Le contrat idéal pour diversifier et optimiser son épargne à frais réduits</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px">Pourquoi ce contrat ?</div>
+        <div class="tags">
+          <span style="background:#1F6B4A">Fonds en euros</span><span style="background:#B02A37">Actions</span>
+          <span style="background:#2E7D32">Immobilier</span><span style="background:#7A1F2B">Private Equity</span>
+        </div>
+        <div class="kv"><span>Perf du fonds euro en 2025 &#9432;</span><span class="v" style="color:var(--green)">+ 3,26 % net</span></div>
+        <div class="kv"><span>Gestion libre</span><span class="v">dès 500 €</span></div>
+        <div class="kv"><span>Gestion pilotée</span><span class="v">dès 500 €</span></div>
+        <div class="kv"><span>Versement programmé</span><span class="v">dès 100 €</span></div>
+        <div class="kv"><span>Frais de dossier</span><span class="v">0 %</span></div>
+        <div class="kv"><span>Frais d'arbitrage en ligne &#9432;</span><span class="v">0 %</span></div>
+        <div class="kv"><span>Frais de versement &#9432;</span><span class="v">0 %</span></div>
+        <div class="kv"><span>Frais de gestion UC &#9432;</span><span class="v">0,5 %</span></div>
+        <div style="margin-top:10px"><a style="font-size:13px;color:var(--navy);text-decoration:underline">En savoir plus</a></div>
+      </div>
+
+      <div class="pjrecall">
+        <h4>Projection potentielle</h4>
+        <div class="two">
+          <div class="box">
+            <div class="n" id="recallCap">—</div>
+            <div class="t">de capital final</div>
+            <div class="t" style="margin-top:6px">Montant versé de votre part :<br><b id="recallVerse">—</b></div>
+            <span class="lnk">&gt; Voir la simulation détaillée</span>
+          </div>
+          <div class="box dark">
+            <div class="n" id="recallGain">—</div>
+            <div class="t">d'intérêts et de plus-values générés sur la période</div>
+            <span class="lnk">&gt; Voir le détail</span>
+          </div>
+        </div>
+        <div style="font-size:10.5px;line-height:1.5;color:#7C858C;margin-top:12px">
+          Les résultats restitués ne constituent pas une prévision de la performance future de vos placements. Simulation non contractuelle réalisée à titre d'information se basant sur les données que vous saisissez. Les rendements passés ne préjugent pas des rendements futurs.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px">Pourquoi l'assurance-vie ?</div>
+        <div class="vthumb">
+          <div class="ttl"><small>COMPRENDRE</small>L'ASSURANCE-VIE</div>
+          <div class="play">&#9654;</div>
+        </div>
+        <div class="reas">
+          <div class="r"><span class="i"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a6 6 0 016-6h4a7 7 0 016.7 5H22v4h-1.5a7 7 0 01-2.5 3v2h-3v-1.3a7 7 0 01-2 .3H9v1H6v-2a6 6 0 01-3-5z"/><circle cx="16" cy="11" r="1" fill="currentColor" stroke="none"/><path d="M9 6V4.5A1.5 1.5 0 0110.5 3h2"/></svg></span><span><b>Argent disponible</b> à tout moment</span></div>
+          <div class="r"><span class="i"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 018 0v3"/></svg></span><span><b>Performance et sécurité</b> du fonds euro</span></div>
+          <div class="r"><span class="i"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 4l9 5.5"/><path d="M5 10v9M10 10v9M14 10v9M19 10v9M3 21h18"/></svg></span><span><b>Fiscalité avantageuse</b> sur les plus-values</span></div>
+          <div class="r"><span class="i"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0113 0"/><path d="M16 5.5a3.2 3.2 0 010 5.4M18.5 20a6.4 6.4 0 00-3-5.4"/></svg></span><span>Excellent outil de <b>transmission</b></span></div>
+        </div>
+      </div>
+
+      <div class="warnline"><span>&#9888;</span><span>Les rendements passés ne présagent pas des rendements futurs</span></div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sStep10')">&#8592; Précédent</button>
+      <button class="cta" onclick="go('sSignup')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 14 · TRANSITION REPRISE ===================== -->
+  <section class="screen" id="sResume">
+    <div class="scroll" style="display:flex;flex-direction:column;background:var(--bg)">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:0 20px">
+        <div style="background:#fff;border-radius:12px;padding:26px 20px;text-align:center;width:100%">
+          <h2 style="margin:0 0 18px;font-size:18px;color:var(--navy)">Prospect revient après dîner</h2>
+          <button class="btn-prim" style="margin:0" onclick="go('sLogin')">Reprise du parcours</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast">Projet enregistré, le lien a été envoyé sur votre e-mail</div>
+  </section>
+
+  <!-- ============ 14b · LOGIN iOS (app native, hors funnel) ============ -->
+  <section class="screen" id="sLogin">
+    <div class="ios">
+      <div class="login">
+        <div class="brand"><img class="lgo" alt=""><span>LINXEA</span></div>
+        <h1>Heureux de vous voir</h1>
+        <div class="fld">
+          <span class="lbl">E-mail</span>
+          <input class="field" value="votre@email.com">
+        </div>
+        <div class="fld">
+          <span class="lbl">Mot de passe</span>
+          <input class="field" type="password" value="MotDePasse2026">
+          <span class="eye"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.8 12S5.5 5.5 12 5.5 22.2 12 22.2 12 18.5 18.5 12 18.5 1.8 12 1.8 12z"/><circle cx="12" cy="12" r="3.1"/></svg></span>
+        </div>
+        <div class="links"><a>Identifiant oublié?</a><a>Mot de passe oublié ?</a></div>
+        <div class="rem"><span class="bx">&#10003;</span><span>Se souvenir de mon identifiant</span></div>
+        <button class="btn-prim">Connexion</button>
+        <button class="btn-sec" onclick="go('sIdent')">Reprendre votre parcours</button>
+        <button class="card becli" onclick="go('sStep1')">
+          <div class="h"><b>Devenez client</b><i>&#8250;</i></div>
+          <p>Découvrez l'univers du leader de l'épargne en ligne. Nous vous aidons à trouver la solution d'investissement qui vous correspond.</p>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 14c · IDENTIFIEZ-VOUS ============ -->
+  <section class="screen" id="sIdent">
+    <div class="ios-hdr">
+      <img class="lgo" alt="Linxea" style="width:24px;height:32px">
+      <div class="icons">
+        <button onclick="openHelp(true)" aria-label="Nous appeler"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.6 3.1 4.1 5.6 7.2 7.2l2.4-2.4c.3-.3.7-.4 1.1-.3 1.2.4 2.4.6 3.7.6.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.9 22 2 13.1 2 2c0-.6.4-1 1-1h4.1c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.7.1.4 0 .8-.3 1.1l-2.8 2z"/></svg></button>
+        <button class="qm" onclick="openHelp(false)" aria-label="Centre d'aide">?</button>
+      </div>
+    </div>
+    <div class="ios">
+      <div class="midcard" style="position:relative">
+        <button class="bk" onclick="go('sLogin')">&#8592;</button>
+        <h2>Identifiez-vous</h2>
+        <p class="s">Saisissez votre email afin d'accéder à votre espace en ligne</p>
+        <span class="lbl">E-mail</span>
+        <input class="field" value="votre@email.com" style="margin-bottom:16px">
+        <button class="btn-prim" style="margin:0" onclick="go('sMail')">Continuer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 14d · CONSULTEZ VOTRE BOÎTE MAIL ============ -->
+  <section class="screen" id="sMail">
+    <div class="ios-hdr">
+      <img class="lgo" alt="Linxea" style="width:24px;height:32px">
+      <div class="icons">
+        <button onclick="openHelp(true)" aria-label="Nous appeler"><svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.6 3.1 4.1 5.6 7.2 7.2l2.4-2.4c.3-.3.7-.4 1.1-.3 1.2.4 2.4.6 3.7.6.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.9 22 2 13.1 2 2c0-.6.4-1 1-1h4.1c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.7.1.4 0 .8-.3 1.1l-2.8 2z"/></svg></button>
+        <button class="qm" onclick="openHelp(false)" aria-label="Centre d'aide">?</button>
+      </div>
+    </div>
+    <div class="ios">
+      <div class="midcard">
+        <div class="env">
+          <svg width="72" height="58" viewBox="0 0 72 58" fill="none" stroke="#1A5169" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M9 22L36 3l27 19v31a2 2 0 01-2 2H11a2 2 0 01-2-2z" fill="#fff"/>
+            <path d="M9 53l26-19h2l26 19" stroke="#F5821F"/>
+            <circle cx="36" cy="21" r="12" fill="#fff"/>
+            <path d="M40 17.6a5 5 0 100 6.8" stroke="#F5821F" stroke-width="2.2"/>
+            <path d="M40 15.5v7.4c0 1.6 1.2 2.2 2.3 1.5 1.5-1 2.2-3 1.9-5.1A8.2 8.2 0 1038 29.1" stroke="#F5821F" stroke-width="2.2"/>
+          </svg>
+        </div>
+        <h2>Vérifiez votre boîte mail</h2>
+        <p class="s" style="margin-bottom:18px">Un email vous a été envoyé si un compte est associé à cette adresse</p>
+        <button class="hc-btn line" style="margin:0">Retour à la connexion</button>
+        <a class="again">Renvoyer l'email</a>
+      </div>
+      <a class="protolink" onclick="go('sReco')">Le prospect ouvre le lien reçu par e-mail <span class="ar">&#8594;</span></a>
+    </div>
+  </section>
+
+  <!-- ===================== 15 · SIGN UP ===================== -->
+  <section class="screen" id="sSignup">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="0"></div>
+    <div class="scroll pb">
+      <div class="recap">
+        <div class="hd"><span class="t">Récapitulatif projet</span><button onclick="go('sReco')">Modifier</button></div>
+        <div class="kv"><span>Contrat :</span><span class="v">Linxea Spirit 2</span></div>
+        <div class="kv"><span>Stratégie :</span><span class="v" id="suStrat">Gestion pilotée, profil Équilibré</span></div>
+        <div class="kv"><span>Versement initial :</span><span class="v" id="suDepot">—</span></div>
+        <div class="kv"><span>Mensuel :</span><span class="v" id="suMens">—</span></div>
+        <div class="kv"><span>Horizon :</span><span class="v" id="suHor">—</span></div>
+      </div>
+      <div class="seg"><button class="on">Création de compte</button><button>Connexion</button></div>
+      <div class="fgrp"><span class="lbl">E-mail</span><input class="field" id="inMail" value="marie.dupont@email.com"></div>
+      <div class="fgrp"><span class="lbl">Mot de passe</span><input class="field" type="password" value="MotDePasse2026!"></div>
+      <div style="margin:-4px 16px 14px;font-size:12px;color:var(--green);display:flex;gap:7px">
+        <span>&#10003;</span><span>Au moins 12 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial</span></div>
+      <div class="check" onclick="tick(this)"><span class="bx"></span><span>J'accepte les conditions générales d'utilisation et la politique de confidentialité de Linxea.</span></div>
+      <div class="check" onclick="tick(this)"><span class="bx"></span><span>Je souhaite recevoir les informations et actualités de Linxea.</span></div>
+      <div class="errmsg" id="eSu" style="margin:0 16px 10px">Veuillez accepter les conditions générales pour continuer.</div>
+      <div class="nextnote">Étape suivante : vos informations réglementaires, envoi des documents obligatoires et la signature — environ 5 minutes.</div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sReco')">&#8592; Précédent</button>
+      <button class="cta" onclick="fromSignup()">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 16 · INFOS PERSO ===================== -->
+  <section class="screen" id="sInfo">
+    <div class="urlbar"><div class="pill"><span class="ico">&#9744;</span>subscription.linxea.com<span class="rl">&#8635;</span></div></div>
+    <div class="hdr" data-hdr="0"></div>
+    <div class="scroll pb">
+      <div style="padding:14px 16px 6px">
+        <h1 style="margin:0 0 6px;font-size:23px;color:var(--navy)">Vos informations</h1>
+        <p style="margin:0;font-size:13.5px;color:var(--muted);line-height:1.5">Ces informations sont nécessaires pour finaliser votre souscription.</p>
+      </div>
+      <div class="fgrp" style="margin-top:14px"><span class="lbl">Nom</span><input class="field" value="Dupont"></div>
+      <div class="fgrp"><span class="lbl">Prénom</span><input class="field" value="Marie"></div>
+      <div class="fgrp"><span class="lbl">Date de naissance</span><input class="field" value="15/03/1985"></div>
+      <div class="fgrp"><span class="lbl">Téléphone <b class="infoi">&#9432;</b></span><input class="field" id="inTel" value="+33 6 12 45 45 56"></div>
+      <div class="infobox">
+        <div class="hd"><span class="ii">&#9432;</span><span>Vous avez indiqué vouloir être accompagné :</span></div>
+        <div class="check" style="margin:0" onclick="tick(this)"><span class="bx"></span><span>Je souhaite être contacté(e) par téléphone pour faire un point sur mon épargne ou bénéficier d'idées d'investissements adaptées à ma situation. Désinscription possible à tout moment.</span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="back" onclick="go('sSignup')">&#8592; Précédent</button>
+      <button class="cta" onclick="go('sFin')">Continuer</button>
+    </div>
+  </section>
+
+  <!-- ===================== 17 · FIN ===================== -->
+  <section class="screen" id="sFin">
+    <div class="scroll" style="display:flex;flex-direction:column;background:var(--bg)">
+      <div style="flex:1;display:flex;align-items:center">
+        <div class="endcard">
+          <h2>SUITE DU PARCOURS</h2>
+          <p>Cet écran (et les suivants — KYC, justificatifs, signature) sont hors périmètre de ce prototype de simulation.</p>
+          <p>Merci d'avoir testé ce parcours de simulation et d'ouverture d'assurance-vie Linxea &#128588;</p>
+          <button class="btn-prim" style="margin:6px 0 0" onclick="restart()">Revenir au début du prototype</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== OVERLAY · SAVE ===================== -->
+  <div class="ov" id="ovSave">
+    <div class="bd" onclick="closeOv('ovSave')"></div>
+    <div class="sheet"><div class="msheet">
+      <h2>Gardez votre projet à portée de main</h2>
+      <p class="s">Reprenez votre parcours quand vous voulez, depuis n'importe quel appareil.</p>
+      <div class="em"><input value="email@test.com"><span class="ic">&#9993;</span></div>
+      <button class="btn-prim" onclick="saveAnd(true)">Sauvegarder et continuer</button>
+      <button class="btn-sec" onclick="saveAnd(false)">Continuer sans sauvegarder</button>
+      <p class="legal">En cliquant, j'accepte la <a>politique de confidentialité</a> et les <a>conditions d'utilisation de Linxea</a>.</p>
+      <div class="remind">Vous pourrez toujours sauvegarder en cliquant sur <b>Continuer plus tard</b> dans la navigation.</div>
+    </div></div>
+  </div>
+
+  <!-- ===================== OVERLAY · EXIT INTENT ===================== -->
+  <div class="ov" id="ovExit">
+    <div class="bd" onclick="closeOv('ovExit')"></div>
+    <div class="sheet"><div class="msheet">
+      <h2>Vous nous quittez ?</h2>
+      <p class="s">Reprenez votre parcours quand vous voulez, depuis n'importe quel appareil ou avec un de nos conseillers</p>
+      <div class="em"><input value="email@test.com"><span class="ic">&#9993;</span></div>
+      <button class="btn-prim" onclick="closeOv('ovExit');go('sResume')">Quitter et sauvegarder</button>
+      <button class="btn-sec" onclick="closeOv('ovExit');go('sCgpt')">Quitter sans sauvegarder</button>
+      <p class="legal">En cliquant, j'accepte la <a>politique de confidentialité</a> et les <a>conditions d'utilisation de Linxea</a>.</p>
+      <div class="remind">Vous pourrez toujours sauvegarder en cliquant sur <b>Continuer plus tard</b> dans la navigation.</div>
+    </div></div>
+  </div>
+
+  <!-- ===================== OVERLAY · HELP CENTER ===================== -->
+  <div class="ov full" id="ovHelp">
+    <div class="sheet" id="hcSheet">
+      <div class="hc-bar"><button onclick="closeOv('ovHelp')" aria-label="Fermer">&#10005;</button></div>
+      <div class="hc-top">
+        <div class="ill">
+          <svg width="44" height="44" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M3 22l7-4 8 5-4 3 5 3-3 3 4 2-3 3-6-2-8-5z" fill="#F6C79F"/>
+            <path d="M45 22l-7-4-9 5 3 3-5 3 3 3-4 2 3 3 7-2 9-5z" fill="#1C7F86"/>
+            <path d="M18 23l6-3 6 3-2 3 4 2-3 3-6-2-6-3z" fill="#FADBBE"/>
+            <path d="M8 30l6 3M40 30l-6 3" stroke="#E0A272" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2>Vous avez indiqué que la gestion de votre épargne vous semble compliquée</h2>
+        <p>Voici ce qu'on peut faire, tout de suite.</p>
+        <div class="hc-srch">
+          <input class="hc-search" placeholder="Rechercher votre question...">
+          <span class="mg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="hc-body">
+        <div class="hc-card reco">
+          <span class="badge o">&#9679; Recommandé pour vous</span>
+          <h3><span class="ic">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+          </span>Prendre rendez-vous</h3>
+          <div class="hc-sub">
+            <h4>Suivi de contrat</h4>
+            <p>Échangez avec l'un de nos conseillers pour faire le point sur votre contrat.</p>
+            <button class="hc-btn fill" style="margin:0">Prendre rendez-vous</button>
+          </div>
+        </div>
+        <div class="hc-card ok">
+          <span class="badge g">&#9679; Disponible maintenant</span>
+          <h3><span class="ic">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a2 2 0 012 2v10a2 2 0 01-2 2H9l-5 4V5a2 2 0 012-2z"/></svg>
+          </span>Discutez avec Linx'IA</h3>
+          <p>Obtenez une réponse instantanée à vos questions grâce à notre assistant Linx'IA, disponible par chat ou sur WhatsApp.</p>
+          <button class="hc-btn line" onclick="closeOv('ovHelp');openOv('ovChat')">Démarrer le chat en ligne</button>
+          <button class="hc-btn navy">Discuter sur WhatsApp</button>
+        </div>
+        <div class="hc-card off" id="hcPhone">
+          <span class="badge r">&#9679; Non disponible à cette heure</span>
+          <h3><span class="ic">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.6 3.1 4.1 5.6 7.2 7.2l2.4-2.4c.3-.3.7-.4 1.1-.3 1.2.4 2.4.6 3.7.6.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.9 22 2 13.1 2 2c0-.6.4-1 1-1h4.1c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.7.1.4 0 .8-.3 1.1l-2.8 2z"/></svg>
+          </span>Par téléphone</h3>
+          <p>Du lundi au jeudi de 9h à 18h et le vendredi de 9h à 18h au <b style="color:var(--ink)">01 45 67 34 22</b> - le service réouvre à 9h demain.</p>
+          <button class="hc-btn line">Appeler</button>
+        </div>
+        <div class="hc-card">
+          <h3><span class="ic">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg>
+          </span>Par mail</h3>
+          <p style="margin:0">Merci de préciser le motif de votre demande à <a style="color:var(--orange);text-decoration:underline">service.client@linxea.com</a> afin d'accélérer son traitement.</p>
+        </div>
+        <div class="hc-card">
+          <h3><span class="ic" style="font-size:15px;font-weight:700">?</span>Questions fréquentes</h3>
+          <div class="tabs"><span class="tab on">Souscription</span><span class="tab">Offres &amp; services</span><span class="tab">Gestion de contrat</span></div>
+          <div class="faq"><span>Comment verser de l'argent sur mon contrat ?</span><i>›</i></div>
+          <div class="faq"><span>Comment faire un arbitrage ?</span><i>›</i></div>
+          <div class="faq"><span>Comment retrouver mes documents ?</span><i>›</i></div>
+          <div class="faq"><span>Comment changer mes coordonnées (mail, téléphone…) ?</span><i>›</i></div>
+          <div class="faq"><span>Quel est mon identifiant pour gérer mon contrat ?</span><i>›</i></div>
+          <div class="faq"><span>Spirit 2 / Spirit PER : pas d'opération pendant les 30 premiers jours</span><i>›</i></div>
+          <div class="faq"><span>Comment mettre en place la gestion pilotée ?</span><i>›</i></div>
+          <div class="faq"><span>Comment effectuer un rachat partiel ou total ?</span><i>›</i></div>
+          <a class="hc-more">Accéder au centre d'aide complet</a>
+        </div>
+        <div class="hc-foot">
+          <a>Politique de confidentialité</a> &nbsp;|&nbsp; <a>Mentions légales</a><br>
+          <a>Conditions générales d'utilisation</a><br>
+          <span style="color:#9AA1A7">Copyright Linxea © 2026 · Tous droits réservés</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BULLE LINX'IA ===================== -->
+  <button class="bub" id="bub" onclick="openOv('ovChat')" aria-label="Ouvrir le chat Linx'IA">
+    <svg width="27" height="27" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <rect x="3" y="4" width="26" height="21" rx="6" fill="#fff"/>
+      <path d="M10 27.5l3-4h6z" fill="#fff"/>
+      <path d="M11 15.5c1.2 2 3 3 5 3s3.8-1 5-3" stroke="#1A5169" stroke-width="2.1" stroke-linecap="round"/>
+    </svg>
+    <span class="dot"></span>
+  </button>
+
+  <!-- ===================== OVERLAY · CHAT LINX'IA ===================== -->
+  <div class="ov full" id="ovChat">
+    <div class="sheet">
+      <div class="chat">
+        <div class="top">
+          <span class="nav2">&#8249;</span>
+          <span class="av"><img class="lgo" alt=""></span>
+          <h3>Linx'IA</h3>
+          <button aria-label="Options">&#8943;</button>
+          <button onclick="closeOv('ovChat')" aria-label="Fermer">&#10005;</button>
+        </div>
+        <div class="body" id="chatBody">
+          <p class="note">Les réponses sont générées par l'agent IA de Linxea.</p>
+          <div class="bot">
+            Bonjour,<br>Je suis Linx'IA, votre assistant d'intelligence artificielle 🤖 <b>Comment puis-je vous aider ?</b>
+            <span class="warn">ℹ️ Vous échangez avec une intelligence artificielle. Les réponses fournies sont générales, informatives et générées automatiquement : elles peuvent comporter des approximations. Elles ne constituent ni un conseil en investissement, ni une recommandation personnalisée.</span>
+          </div>
+        </div>
+        <div class="foot">
+          <div class="inp" id="chatInp" onclick="chatNext()">
+            <div class="ph" id="chatPh">Envoyer un message...</div>
+            <div class="row2">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0013 0M12 18v3.5"/></svg>
+              <span class="send">&#8593;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gtoast" id="gToast"></div>
+  </div><!-- /viewport -->
+</div><!-- /device -->
+
+<script>
+/* ---------------- header injection ---------------- */
+const ICO_PHONE = '<svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
+  + '<path d="M6.6 10.8c1.6 3.1 4.1 5.6 7.2 7.2l2.4-2.4c.3-.3.7-.4 1.1-.3 1.2.4 2.4.6 3.7.6.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.9 22 2 13.1 2 2c0-.6.4-1 1-1h4.1c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.7.1.4 0 .8-.3 1.1l-2.8 2z"/></svg>';
+document.querySelectorAll('.hdr').forEach(h=>{
+  const withLater = h.dataset.hdr === '1';
+  h.innerHTML =
+    '<img class="logo lgo" alt="Linxea" onclick="openOv(\'ovExit\')">' +
+    (withLater
+      ? '<div class="laterwrap"><button class="later" onclick="openSave(null)">Continuer plus tard &gt;</button></div>'
+      : '<div class="spacer"></div>') +
+    '<div class="icons">' +
+      '<button onclick="openHelp(true)" aria-label="Nous appeler">'+ICO_PHONE+'</button>' +
+      '<button class="qm" onclick="openHelp(false)" aria-label="Centre d\'aide">?</button>' +
+    '</div>';
+});
+
+/* ---------------- navigation ---------------- */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  const sc = el.querySelector('.scroll'); if(sc) sc.scrollTop = 0;
+  /* la bulle Linx'IA n'apparaît que dans le tunnel (écrans à en-tête Linxea) */
+  document.getElementById('bub').classList.toggle('show', !!el.querySelector('.hdr'));
+}
+function restart(){
+  document.querySelectorAll('.opt.sel').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.chip.on').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.check .bx.on').forEach(b=>{b.classList.remove('on');b.innerHTML='';});
+  ['inDepot','inMens','inHor'].forEach(id=>{const e=document.getElementById(id); if(e) e.value='';});
+  document.getElementById('inTel').value = '+33 6 12 45 45 56';
+  document.querySelectorAll('.errmsg.show').forEach(e=>e.classList.remove('show'));
+  hideCallout(); chatReset(); setProfil(1); updateProjection();
+  go('sCgpt');
+}
+
+/* ---------------- selection ---------------- */
+function pick(btn, next){
+  document.querySelectorAll('.opt[data-g="'+btn.dataset.g+'"]').forEach(o=>o.classList.remove('sel'));
+  btn.classList.add('sel');
+  hideErrForGroup(btn.dataset.g);
+  if(next) setTimeout(()=>go(next), 260);   /* validation au clic sur la réponse */
+}
+function pickMulti(btn){
+  const sel = document.querySelectorAll('.opt[data-g="'+btn.dataset.g+'"].sel');
+  if(!btn.classList.contains('sel') && sel.length >= 3) return;
+  btn.classList.toggle('sel');
+  hideErrForGroup(btn.dataset.g);
+}
+function hideErrForGroup(g){
+  const map = {g1:'e1',g2:'e2',g6:'e6',g8:'e8',g9:'e9',g10:'e10'};
+  const e = document.getElementById(map[g]); if(e) e.classList.remove('show');
+}
+function need(group, errId, next){
+  if(document.querySelectorAll('.opt[data-g="'+group+'"].sel').length === 0){
+    document.getElementById(errId).classList.add('show'); return;
+  }
+  document.getElementById(errId).classList.remove('show');
+  go(next);
+}
+function needVal(inputId, errId, next){
+  if(!document.getElementById(inputId).value.trim()){
+    document.getElementById(errId).classList.add('show'); return;
+  }
+  document.getElementById(errId).classList.remove('show');
+  go(next);
+}
+function tick(row){
+  const bx = row.querySelector('.bx');
+  bx.classList.toggle('on');
+  bx.innerHTML = bx.classList.contains('on')
+    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></svg>'
+    : '';
+  document.getElementById('eSu') && document.getElementById('eSu').classList.remove('show');
+}
+function fromSignup(){
+  const cgu = document.querySelectorAll('#sSignup .check')[0].querySelector('.bx');
+  if(!cgu.classList.contains('on')){ document.getElementById('eSu').classList.add('show'); return; }
+  go('sInfo');
+}
+
+/* ---------------- callout étape 8 ---------------- */
+function showCallout(){ document.getElementById('callout').style.display='block'; }
+function hideCallout(){ document.getElementById('callout').style.display='none'; }
+
+/* ---------------- overlays ---------------- */
+let saveReturn = null;
+function openOv(id){ document.getElementById(id).classList.add('open'); }
+function closeOv(id){ document.getElementById(id).classList.remove('open'); }
+function openSave(ret){ saveReturn = ret; openOv('ovSave'); }
+/* deux issues distinctes :
+   – sauvegarder  → e-mail envoyé (toast) puis suite, ou écran de reprise si on venait du header
+   – sans sauvegarder → on continue le parcours, rien n'est enregistré              */
+function saveAnd(save){
+  closeOv('ovSave');
+  const r = saveReturn; saveReturn = null;
+  if(save){
+    if(r){ go(r); flashToast('Projet enregistré, le lien a été envoyé sur votre e-mail'); }
+    else  { go('sResume'); }
+  } else {
+    if(r) go(r);
+  }
+}
+function flashToast(msg){
+  const t = document.getElementById('gToast');
+  t.textContent = msg; t.classList.add('on');
+  clearTimeout(flashToast._t);
+  flashToast._t = setTimeout(()=>t.classList.remove('on'), 3200);
+}
+function openHelp(scrollToPhone){
+  openOv('ovHelp');
+  const sheet = document.getElementById('hcSheet');
+  sheet.scrollTop = 0;
+  if(scrollToPhone){
+    setTimeout(()=>{ document.getElementById('hcPhone').scrollIntoView({behavior:'smooth', block:'center'}); }, 120);
+  }
+}
+
+const LOGO='data:image/png;base64,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';
+function paintLogos(){document.querySelectorAll('img.lgo').forEach(i=>{if(!i.src||i.src.length<40)i.src=LOGO;});}
+
+/* ---------------- projection engine ---------------- */
+const PROFILS = [
+  {nom:'Défensif',  taux:3},
+  {nom:'Équilibré', taux:4.8},
+  {nom:'Dynamique', taux:6.2},
+  {nom:'Agressif',  taux:9}
+];
+let profil = 1;
+const rate    = ()=> PROFILS[profil].taux;
+const rateLow = ()=> PROFILS[profil].taux/2;   /* scénario défavorable : moitié de l'hypothèse */
+const fmtPct  = n => n.toString().replace('.',',');
+function fmtEUR(v){ return Math.round(v).toLocaleString('fr-FR').replace(/ | /g,' ') + ' €'; }
+function futureValue(depot, monthly, years, ratePct){
+  const r = (ratePct/100)/12, m = years*12;
+  if(m<=0) return depot;
+  if(r===0) return depot + monthly*m;
+  const g = Math.pow(1+r, m);
+  return depot*g + monthly*((g-1)/r);
+}
+function totalVerse(depot, monthly, years){ return depot + monthly*years*12; }
+
+function buildChart(depot, monthly, horizon, ratePct){
+  const svg = document.getElementById('chart');
+  const W=600,H=200,PAD_L=42,PAD_B=18,PAD_T=8,PAD_R=6,n=8;
+  const ys=[]; for(let i=0;i<=n;i++) ys.push(horizon*i/n);
+  const cap = ys.map(y=>futureValue(depot,monthly,y,ratePct));
+  const ver = ys.map(y=>totalVerse(depot,monthly,y));
+  const maxY = Math.max(...cap, ...ver, 1)*1.08;
+  const xF = y => PAD_L + (W-PAD_L-PAD_R)*(y/(horizon||1));
+  const yF = v => H-PAD_B - (H-PAD_B-PAD_T)*(v/maxY);
+  const path = pts => pts.map((v,i)=>(i===0?'M':'L')+xF(ys[i]).toFixed(1)+','+yF(v).toFixed(1)).join(' ');
+  let grid='';
+  for(let g=0; g<=3; g++){
+    const val = maxY*g/3, y = yF(val).toFixed(1);
+    grid += '<line x1="'+PAD_L+'" y1="'+y+'" x2="'+(W-PAD_R)+'" y2="'+y+'" stroke="#ECEEF0" stroke-width="1"/>';
+    grid += '<text x="2" y="'+(+y+4)+'" font-size="10" fill="#9AA1A7">'+(val>=1000?Math.round(val/1000)+'k':Math.round(val))+'</text>';
+  }
+  const lbl = '<text x="'+PAD_L+'" y="'+(H-4)+'" font-size="10" fill="#9AA1A7">Maintenant</text>'
+    + '<text x="'+((W-PAD_R)/2)+'" y="'+(H-4)+'" font-size="10" fill="#9AA1A7" text-anchor="middle">'+Math.round(horizon/2)+' ans</text>'
+    + '<text x="'+(W-PAD_R)+'" y="'+(H-4)+'" font-size="10" fill="#9AA1A7" text-anchor="end">'+Math.round(horizon)+' ans</text>';
+  svg.innerHTML = grid + lbl
+    + '<path d="'+path(ver)+'" fill="none" stroke="#B7B7BF" stroke-width="2"/>'
+    + '<path d="'+path(cap)+'" fill="none" stroke="#F5821F" stroke-width="2.5"/>';
+}
+
+/* ---------------- réglette profil ---------------- */
+/* le curseur s'arrête au centre du libellé : bord à bord pour Défensif / Agressif,
+   au milieu du texte pour les deux profils intermédiaires */
+const KNOB_POS = [0, 37.5, 62.5, 100];
+function setProfil(i){
+  profil = Math.max(0, Math.min(3, i));
+  const pct = KNOB_POS[profil]/100;
+  document.getElementById('riskKnob').style.left = 'calc(8px + '+(pct*100)+'% - '+(pct*16)+'px)';
+  document.getElementById('riskFill').style.width = (pct*100)+'%';
+  document.querySelectorAll('#riskNames span').forEach((s,k)=>s.classList.toggle('act', k===profil));
+  updateProjection();
+}
+(function initRisk(){
+  const t = document.getElementById('riskTrack');
+  const pick = e=>{
+    const r = t.getBoundingClientRect();
+    const x = 100*((e.touches?e.touches[0].clientX:e.clientX) - r.left - 8) / Math.max(1, r.width-16);
+    let best = 0, d = 1e9;
+    KNOB_POS.forEach((v,k)=>{ const dd = Math.abs(v-x); if(dd<d){ d = dd; best = k; } });
+    setProfil(best);
+  };
+  let dragging = false;
+  t.addEventListener('pointerdown', e=>{ dragging = true; t.setPointerCapture(e.pointerId); pick(e); });
+  t.addEventListener('pointermove', e=>{ if(dragging) pick(e); });
+  t.addEventListener('pointerup',   ()=>{ dragging = false; });
+  t.addEventListener('pointercancel', ()=>{ dragging = false; });
+})();
+
+function readProjet(){
+  return {
+    depot: Number(document.getElementById('inDepot').value)||0,
+    mens:  Number(document.getElementById('inMens').value)||0,
+    hor:   Number(document.getElementById('inHor').value)||0
+  };
+}
+function updateProjection(){
+  const v = readProjet();
+  const complete = v.depot>0 && v.mens>0 && v.hor>0;
+  document.getElementById('pjEmpty').style.display  = complete ? 'none' : 'block';
+  document.getElementById('pjFilled').style.display = complete ? 'block' : 'none';
+  if(!complete) return;
+  document.getElementById('e3').classList.remove('show');
+  const p = PROFILS[profil];
+  const moyen = futureValue(v.depot, v.mens, v.hor, rate());
+  const low   = futureValue(v.depot, v.mens, v.hor, rateLow());
+  const verse = totalVerse(v.depot, v.mens, v.hor);
+  document.getElementById('rMoyen').textContent = fmtEUR(moyen);
+  document.getElementById('rGain').textContent  = 'Gain  +'+fmtEUR(moyen-verse);
+  document.getElementById('rLow').textContent   = '~ '+fmtEUR(low);
+  document.getElementById('rHint').textContent  =
+    'Profil '+p.nom+' · hypothèse illustrative de '+fmtPct(p.taux)+' % / an';
+  document.getElementById('rDisc').textContent  =
+    'Simulation à caractère non contractuel, établie sur une hypothèse de performance annuelle moyenne de '
+    +fmtPct(p.taux)+' %, nets de frais de gestion. Le scénario défavorable retient la moitié de cette hypothèse ('
+    +fmtPct(p.taux/2)+' % / an). Les performances passées ne préjugent pas des performances futures. '
+    +'Un investissement en unités de compte présente un risque de perte en capital.';
+  buildChart(v.depot, v.mens, v.hor, rate());
+  document.getElementById('recallCap').textContent   = fmtEUR(moyen);
+  document.getElementById('recallVerse').textContent = fmtEUR(verse);
+  document.getElementById('recallGain').textContent  = fmtEUR(moyen-verse);
+  document.getElementById('recoStrat').textContent   = 'Gestion pilotée, profil '+p.nom;
+  document.getElementById('suStrat').textContent     = 'Gestion pilotée, profil '+p.nom;
+  document.getElementById('suDepot').textContent = fmtEUR(v.depot);
+  document.getElementById('suMens').textContent  = fmtEUR(v.mens)+' / mois';
+  document.getElementById('suHor').textContent   = v.hor+' ans';
+}
+['inDepot','inMens','inHor'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{
+    const chips = document.querySelector('.chips[data-for="'+id+'"]');
+    chips.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on', Number(c.dataset.v)===Number(document.getElementById(id).value)));
+    updateProjection();
+  });
+});
+document.querySelectorAll('.chips .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    const id = chip.parentElement.dataset.for;
+    document.getElementById(id).value = chip.dataset.v;
+    chip.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    chip.classList.add('on');
+    updateProjection();
+  });
+});
+function fromProjet(){
+  const v = readProjet();
+  if(!(v.depot>0 && v.mens>0 && v.hor>0)){ document.getElementById('e3').classList.add('show'); return; }
+  document.getElementById('e3').classList.remove('show');
+  openSave('sStep6');
+}
+
+/* ---------------- chat Linx'IA (script de démo) ---------------- */
+const CHAT = [
+  { q: "C'est quoi une unité de compte ?",
+    a: "Une unité de compte est un support d'investissement du contrat (ETF, actions, SCPI, private equity…). Sa valeur évolue avec les marchés : elle n'est pas garantie, contrairement au fonds en euros. C'est une explication générale, pas une recommandation." },
+  { q: "Quel profil de gestion dois-je choisir : Équilibré ou Dynamique ?",
+    a: "Je ne peux pas vous indiquer le profil à retenir. La réglementation réserve le conseil en investissement à un conseiller Linxea, qui doit d'abord vérifier que la solution correspond à votre situation, à vos objectifs et à votre horizon.<br><br>Ce que je peux faire : vous expliquer ce que recouvre chaque profil et la part d'unités de compte qu'il comporte." },
+  { q: "Justement, j'ai besoin d'être accompagné pour choisir.",
+    a: "Pour un accompagnement personnalisé, <a onclick=\"closeOv('ovChat');openHelp(true)\">contactez un conseiller Linxea</a> par téléphone 📞 ou par mail 📩 — c'est lui qui pourra vous recommander une solution." }
+];
+let chatStep = 0;
+function chatAdd(cls, html){
+  const d = document.createElement('div');
+  d.className = cls; d.innerHTML = html;
+  document.getElementById('chatBody').appendChild(d);
+  const b = document.getElementById('chatBody'); b.scrollTop = b.scrollHeight;
+  return d;
+}
+function chatNext(){
+  const inp = document.getElementById('chatInp');
+  if(inp.classList.contains('busy') || chatStep >= CHAT.length) return;
+  const item = CHAT[chatStep++];
+  inp.classList.add('busy');
+  chatAdd('me2', item.q);
+  const t = chatAdd('typing', '<i></i><i></i><i></i>');
+  setTimeout(()=>{
+    t.remove(); chatAdd('bot', item.a);
+    inp.classList.remove('busy');
+    const ph = document.getElementById('chatPh');
+    if(chatStep >= CHAT.length){ inp.classList.add('done'); ph.textContent = 'Envoyer un message...'; }
+    else ph.textContent = 'Appuyez pour poser la question suivante…';
+  }, 900);
+}
+function chatReset(){
+  chatStep = 0;
+  const b = document.getElementById('chatBody');
+  let seenFirstBot = false;
+  [...b.querySelectorAll('.me2,.bot,.typing')].forEach(e=>{
+    if(e.classList.contains('bot') && !seenFirstBot){ seenFirstBot = true; return; }
+    e.remove();
+  });
+  const inp = document.getElementById('chatInp');
+  inp.classList.remove('done','busy');
+  document.getElementById('chatPh').textContent = 'Envoyer un message...';
+}
+
+/* ---------------- init ---------------- */
+paintLogos();
+setProfil(1);
+</script>
+</body>
+</html>

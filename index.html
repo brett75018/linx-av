@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sébastien Brett — product design case study">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Start now. Decide later.">
+<meta property="og:description" content="Mobile life-insurance onboarding for a saver who arrives already advised. Clickable prototype — English and French.">
+<meta property="og:url" content="https://brett75018.github.io/linx-av/">
+<meta property="og:image" content="https://brett75018.github.io/linx-av/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Start now. Decide later. — a prototype screen showing an AI assistant recommending a life-insurance contract.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Start now. Decide later.">
+<meta name="twitter:description" content="Mobile life-insurance onboarding for a saver who arrives already advised. Clickable prototype — English and French.">
+<meta name="twitter:image" content="https://brett75018.github.io/linx-av/og-image.png">
+<meta name="theme-color" content="#FBF8F4">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beginner onboarding prototype — case study</title>
+<meta name="description" content="Clickable prototype from a product design case study on mobile life-insurance onboarding for first-time savers.">
+<style>
+  :root{
+    --ink:#1A5169; --ink-soft:#5A7383; --accent:#F5821F;
+    --bg:#FBF8F4; --card:#FFFFFF; --line:#E4E7EA;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --ink:#EAF1F5; --ink-soft:#9FB3C0; --bg:#0E1F29; --card:#15303D; --line:#23485A; }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; align-items:center; justify-content:center;
+    padding:32px 20px; min-height:100vh;
+  }
+  main{width:100%; max-width:620px}
+  .rule{width:64px; height:5px; background:var(--accent); border-radius:3px; margin-bottom:26px}
+  .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-soft); margin:0 0 12px;
+  }
+  h1{font-size:clamp(28px,6vw,40px); line-height:1.12; margin:0 0 14px; letter-spacing:-.02em}
+  h1 span{color:var(--accent)}
+  .lede{margin:0 0 30px; color:var(--ink-soft); max-width:48ch}
+  .picker{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media (max-width:520px){ .picker{grid-template-columns:1fr} }
+  a.card{
+    display:block; padding:20px 22px; border:1px solid var(--line); border-radius:14px;
+    background:var(--card); color:inherit; text-decoration:none;
+    transition:border-color .15s, transform .15s;
+  }
+  a.card:hover,a.card:focus-visible{ border-color:var(--accent); transform:translateY(-2px) }
+  a.card:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+  .lang{font-size:19px; font-weight:600; margin-bottom:3px}
+  .meta{font-size:13px; color:var(--ink-soft)}
+  footer{margin-top:34px; font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+  footer a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+  <div class="rule"></div>
+  <p class="eyebrow">Product design case study</p>
+  <h1>Start now.<br><span>Decide later.</span></h1>
+  <p class="lede">A clickable prototype for mobile life-insurance onboarding, designed for a first-time saver who arrives already advised. Pick a language to open it.</p>
+
+  <div class="picker">
+    <a class="card" href="en.html">
+      <div class="lang">English</div>
+      <div class="meta">Open the prototype</div>
+    </a>
+    <a class="card" href="fr.html">
+      <div class="lang">Français</div>
+      <div class="meta">Ouvrir le prototype</div>
+    </a>
+  </div>
+
+  <footer>
+    Independent case study by Sébastien Brett. Not affiliated with, commissioned by, or endorsed by LINXEA.
+    Screens, figures and projections are illustrative and do not constitute financial advice.
+  </footer>
+</main>
+</body>
+</html>
